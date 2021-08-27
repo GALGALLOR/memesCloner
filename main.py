@@ -53,4 +53,4 @@ def obtain_images():
     for dps in list_of_images:
         print(dps)
 
-
+obtain_images()
