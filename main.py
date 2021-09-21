@@ -4,6 +4,7 @@ import json
 from instabot import Bot
 from flask import Flask,request,render_template,redirect
 import time
+import os
 import re
 import random
 import pyautogui
@@ -12,15 +13,18 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys #for pressing keys on the keyboard in chrome
 names='its.galo_2'
 passy='KCD831J'
-
+bot = Bot()
+ 
+bot.login(username = "jabbling2020",
+          password = "galojabbling04")
 app=Flask(__name__)
 PATH ="C:/Users/LENOVO/Downloads/chromedriver.exe"
-driver = webdriver.Chrome(PATH)
+
 
 
 
 def post_to_gram(names,passy):
-
+    driver = webdriver.Chrome(PATH)
     driver.get('https://www.instagram.com/accounts/login/')
     time.sleep(5)
     username=driver.find_element_by_xpath('//*[@id="loginForm"]/div/div[1]/div/label/input')
@@ -101,6 +105,7 @@ def download_image2(images):
     open(file, 'wb').write(r.content)
 
 def download_image(image):
+    driver = webdriver.Chrome(PATH)
     fifi='//*[@id="app"]/div/div[1]/div[2]/input'
     url='https://imgdownloader.com/'
     driver.get(url)
@@ -120,28 +125,43 @@ def download_image(image):
 
 def execute_download_image():
     ldnf=0
-    for image in list_of_images:
-        try:
-            ldnf=ldnf+1
-            print('image ',ldnf)
-            print(image)
-            if 'gif' in image:
-                print('cannot work on a gif image')
-            elif 'us' in image:
-                print('error found...passing')
-            elif 'facebook' in image:
-                print('cannot download logos... passing')
-            else:
-                print('Proper image found')
-                download_image2(image)
-                print('successfully downloaded')
-                time.sleep(5)
-                post_to_gram_2(file)
-                
-            
-        except:
-            print('testing the alternative')
-            pass
+    xlf=0
+    for xxxl in list_of_captions:
+        for image in list_of_images:
+            try:
+                ldnf=ldnf+1
+                print('image ',ldnf)
+                print(image)
+                if 'gif' in image:
+                    print('cannot work on a gif image')
+                elif 'us' in image:
+                    print('error found...passing')
+                elif 'i.dailymail.co.uk/i/pix' in image:
+                    print('Possible logo found')
+                elif 'facebook' in image:
+                    print('cannot download logos... passing')
+                else:
+                    print('Proper image found')
+                    download_image2(image)
+                    print('successfully downloaded')
+                    time.sleep(5)
+                    try:
+                        bot.upload_photo(file,
+                         caption =xxxl)
+                        xlf=xlf+1
+                        print('successfully posted')
+                        time.sleep(10)
+                        os.remove(file)
+                    except:
+                        os.remove(file)
+                        print('Could not post the image')
+                        time.sleep(2)
+                        print('deleteing the Image')
+
+
+            except:
+                print('testing the alternative')
+                pass
 
 
 def scan_area():
@@ -158,18 +178,6 @@ def post_to_gram_2(file):
 
  
  
-bot = Bot()
- 
-bot.login(username = "user_name",
-          password = "user_password")
- 
-# Recommended to put the photo
-# you want to upload in the same
-# directory where this Python code
-# is located else you will have
-# to provide full path for the photo
-bot.upload_photo("",
-                 caption ="Techn"
 
 
 #post_to_gram_2()
