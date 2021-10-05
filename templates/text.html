@@ -1,27 +1,38 @@
 <html>
     <head>
-        <link rel="stylesheet" href="home.css">
-        <link rel="icon" href="https://image.shutterstock.com/image-photo/soccer-ball-on-isolated-260nw-535561051.jpg">
-        <title>Football updates</title>
+        <title>The Instabot website</title>
+
     </head>
-    <body>
-        <h3>Football reports activator</h3> <h2 style='color:greenyellow;' >Bot ACTIVATED</h2>
-     {%for caption in captions%}
-     <h1>{{caption}}</h1>
-     {%endfor%}
-            {%for image in images%}
-            <img style='width:50%;' src={{image}} alt="">
-            
-            
-
-            {%endfor%}
+    <style>
+        td,th{
+        border:red solid 1px;
+        }
+    </style>
+    <body style='margin-left:20%;margin-top: 10%;' >
+        <h1>This is the Instabot website...</h1>
+        <form  method='post'>
+        <label for="url">Enter the url for the upcoming webiste</label><br>
+        <input name='url' type="text" id='url' placeholder='Enter Url here' >
         
-    <div style='color:red;' class="problems">
-            <h2>problems encountered!!!---- </h2>
-            <h3>Failure to increase the resolution of the pictures😢</h3>
-            <h3>Failure to Detect the post button on instagram accounts</h3>
-            <h3>---!!</h3>
-
-    </div>
+        <br><label style='color:red' for="url"> put the Reccurring section in {} </label>
+        
+        <h1>https://nairobiwire.com/humour</h1>
+        <div class="table">
+            <table  >
+                <tr>
+                    <th>Url of the Page</th>
+                </tr>
+                {%for url in list_of_dtp%}
+                <tr>
+                    <td>{{url}}</td>
+                </tr>
+                {%endfor%}
+            </table>
+            <h3>Clear the list?</h3>
+                <label for="yes">yes</label><input   id='yes' value='yes' name='clear' type="radio"  ><br>
+                <input value='submit' name='submit' type="submit">
+            </form>
+        </div>
+        
     </body>
 </html>
