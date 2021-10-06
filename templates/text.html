@@ -1,7 +1,7 @@
 <html>
     <head>
         <title>The Instabot website</title>
-
+        <link rel="icon" href="https://image.shutterstock.com/image-vector/funny-vector-robot-flat-style-260nw-532218982.jpg">
     </head>
     <style>
         td,th{
@@ -16,7 +16,7 @@
         
         <br><label style='color:red' for="url"> put the Reccurring section in {} </label>
         
-        <h1>https://nairobiwire.com/humour</h1>
+        <a target="blank" href="https://nairobiwire.com/humour"><h1>https://nairobiwire.com/humour</h1></a>
         <div class="table">
             <table  >
                 <tr>
@@ -28,8 +28,13 @@
                 </tr>
                 {%endfor%}
             </table>
-            <h3>Clear the list?</h3>
-                <label for="yes">yes</label><input   id='yes' value='yes' name='clear' type="radio"  ><br>
+            <label for="activator">Activate the bot</label><input type="radio" id='activator' name='activator' value='activator'>
+                                                            <input type="radio" name='activator' value='no'>
+            <br><br>
+            <label for='yes' >Clear the list?</label>
+                <label for="yes">yes</label><input   id='yes' value='yes' name='clear' type="radio"  >
+                                            <input type="radio" name='clear' value='no'>
+                <br><br>
                 <input value='submit' name='submit' type="submit">
             </form>
         </div>

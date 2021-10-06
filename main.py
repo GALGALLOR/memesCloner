@@ -31,13 +31,19 @@ app.config['MYSQL_USER']='root'
 app.config['MYSQL_PASSWORD']='GALGALLO10'
 app.config['MYSQL_DB']='MEMES'
 
-
 bot = Bot()
 bot.login(username = "jabbling2020",
-              password = "galojabbling04")
-def post_to_gram(file,url):
-    bot.upload_photo(file,caption='#kenyantrendingmemes #kenyantrendingimages '+url)
+          password = "galojabbling04")
 
+def post_to_gram(file):
+
+    bot.upload_photo(file,caption='#kenyantrendingmemes #kenyantrendingimages ')
+    
+def insert_domain(domain):
+    with app.app_context():
+        cursor=mydb.connection.cursor()
+        cursor.execute('INSERT INTO DOMAINS(URL)VALUES(%s)',(domain,))
+        mydb.connection.commit()
 
 
 
@@ -68,7 +74,7 @@ def obtain_images(url):
                 mydb.connection.commit()
                 print('Successfully uploaded to database')
 
-                post_to_gram(file,url)
+                post_to_gram(file)
         except:
             try:
                 url=str(url)
@@ -83,7 +89,7 @@ def obtain_images(url):
                 cursor.execute('INSERT INTO IMAGES(URL)VALUES(%s)',(url,))
                 mydb.connection.commit()
 
-                post_to_gram(file,url)
+                post_to_gram(file)
             except:
                 print('unknown error occurred with the bot')
                 try:
@@ -94,7 +100,14 @@ def obtain_images(url):
                 except:
                     print('could not find the error')
 
-list_of_dtp=[]
+list_of_domains=[]
+with app.app_context():
+    cursor=mydb.connection.cursor()
+    cursor.execute('SELECT * FROM DOMAINS')
+domains=cursor.fetchall()
+for domain in domains:
+    for minidomain in domain:
+        list_of_domains.append(minidomain)
 
 @app.route('/',methods=['POST','GET'])
 def home():
@@ -104,20 +117,33 @@ def home():
             clear=str(request.form['clear'])
             if clear=='yes':
                 print('clear command detected')
-                list_of_dtp.clear()
+                list_of_domains.clear()
         except:
             print('clear command undetected')
+        
+        try:
+            activator=str(request.form['activator'])
+            if activator=='activator':
+                for url in list_of_domains:
+                    for number in range(1,20):
+                        url=url.format(number)
+                        obtain_images(url)
+                        print('image',number)
+                        print(url)
+        except:
+            print('actvator not found')
+
         if len(url)>5:
-            list_of_dtp.append(url)
+            insert_domain(url)
         else:
             print('url shorter than 5 characters')
             pass
 
 
-        print(list_of_dtp)
+        print(list_of_domains)
         return redirect(url_for('home'))
     else:
-        return render_template('text.html',list_of_dtp=list_of_dtp)
+        return render_template('text.html',list_of_dtp=list_of_domains)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

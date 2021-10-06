@@ -30,13 +30,13 @@ app.config['MYSQL_PASSWORD']='GALGALLO10'
 app.config['MYSQL_DB']='MEMES'
 
 
-from PIL import Image  
+'''from PIL import Image  
 def resize(image):
     im = Image.open(image)  
     newsize = (1080, 1080) 
     im1 = im.resize(newsize) 
     im1.save(image)
-
+'''
 bot = Bot()
 time.sleep(5)
 bot.login(username = "jabbling2020",
@@ -71,7 +71,6 @@ def obtain_images(url):
                 cursor.execute('INSERT INTO IMAGES(URL)VALUES(%s)',(url,))
                 mydb.connection.commit()
                 print('Successfully uploaded to database')
-                resize(file)
                 post_to_gram(file)
         except:
             try:
@@ -86,8 +85,6 @@ def obtain_images(url):
                 cursor=mydb.connection.cursor()
                 cursor.execute('INSERT INTO IMAGES(URL)VALUES(%s)',(url,))
                 mydb.connection.commit()
-
-                resize(file)
                 post_to_gram(file)
             except:
                 print('unknown error occurred with the bot')

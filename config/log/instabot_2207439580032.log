@@ -1,0 +1,5 @@
+2021-10-06 22:46:42,712 - instabot version: 0.108.0 (bot) - INFO - Instabot version: 0.108.0 Started
+2021-10-06 22:46:42,720 - instabot version: 0.108.0 (api_login) - INFO - PRE-LOGIN FLOW!... 
+2021-10-06 22:46:57,634 - instabot version: 0.108.0 (api) - INFO - Logged-in successfully as 'jabbling2020'!
+2021-10-06 22:46:57,634 - instabot version: 0.108.0 (api_login) - INFO - LOGIN FLOW! Just logged-in: True
+2021-10-06 22:47:38,608 - instabot version: 0.108.0 (bot) - INFO - Total requests: 21
