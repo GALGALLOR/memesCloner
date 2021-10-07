@@ -65,8 +65,8 @@ def remove_config():
 
 def post_to_gram(file):
     bot = Bot()
-    bot.login(username = "jabbling2020",
-          password = "galojabbling04")
+    bot.login(username = "its.galo_2",
+          password = "KCD831J")
     bot.upload_photo(file,caption='#kenyantrendingmemes #kenyantrendingimages ')
     remove_config()
 
@@ -88,7 +88,6 @@ def obtain_images(url1):
             else:
                 url=str(url1)
                 r = requests.get(url, allow_redirects=True)
-                global file
                 file=random.randint(1,100000)
                 file='images/'+str(file)+'.png'
                 open(file, 'wb').write(r.content)
@@ -96,7 +95,7 @@ def obtain_images(url1):
                 cursor.execute('INSERT INTO IMAGES(URL)VALUES(%s)',(url,))
                 mydb.connection.commit()
                 print('Successfully uploaded to database')
-                post_to_gram(file)
+                
         except:
             
             url1=str(url1)
@@ -106,14 +105,13 @@ def obtain_images(url1):
             file=random.randint(1,100000)
             
             file='images/'+str(file)+'.png'
-            print(file)
+            
             open(file, 'wb').write(r.content)
-           
             cursor=mydb.connection.cursor()
             cursor.execute('INSERT INTO IMAGES(URL)VALUES(%s)',(url1,))
             mydb.connection.commit()
             print('Successfully uploaded to database')
-            post_to_gram(file)
+            
 
 
 
@@ -163,6 +161,7 @@ def home():
                         try:
                             print(domain)
                             url1=domain.format(number)
+                            print(url1)
                             obtain_images(url1)
                             print('image',number)
                             print(url1,'xxxl')
