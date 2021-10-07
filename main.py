@@ -1,20 +1,13 @@
 from flask import Flask
-from flask import redirect,render_template,request,url_for
 import mysql
-import requests
+from os import listdir
+import os
+from os.path import isfile, join
 from bs4 import BeautifulSoup
 from instabot import Bot
-import instaloader
-from flask import Flask,request,render_template,redirect
 import time
-import os
-import re
 import random
-import pyautogui
 import requests
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys #for pressing keys on the keyboard in chrome
-
 from flask_mysqldb import MySQL
 from flask import  get_flashed_messages, session,Flask,render_template,redirect,request,flash,url_for
 app=Flask(__name__)
@@ -31,110 +24,157 @@ app.config['MYSQL_USER']='root'
 app.config['MYSQL_PASSWORD']='GALGALLO10'
 app.config['MYSQL_DB']='MEMES'
 
-bot = Bot()
-bot.login(username = "jabbling2020",
-          password = "galojabbling04")
+
+
+
+
+def insert_domain(domain,list):
+    if domain in list:
+        print('domain in list')
+    else:
+        with app.app_context():
+            cursor=mydb.connection.cursor()
+            cursor.execute('INSERT INTO DOMAINS(URL)VALUES(%s)',(domain,))
+            mydb.connection.commit()
+        list.append(domain)
+
+def remove_config():
+    try:
+        mypath='config'
+        onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+        for files in onlyfiles:
+            os.remove(mypath+'/'+files)
+
+        try:
+            pycache='__pycache__'
+            onlyfiles = [f for f in listdir(pycache) if isfile(join(pycache, f))]
+            for file in onlyfiles:
+                os.remove(pycache+'/'+file)
+        except:
+            pass
+
+        logfile='config/log'
+        onlyfiles = [f for f in listdir(logfile) if isfile(join(logfile, f))]
+        for files in onlyfiles:
+            os.remove(logfile+'/'+files)
+
+        os.rmdir('config/log')
+        os.rmdir(mypath)
+    except:
+        print('directories not found')
 
 def post_to_gram(file):
-
+    bot = Bot()
+    bot.login(username = "jabbling2020",
+          password = "galojabbling04")
     bot.upload_photo(file,caption='#kenyantrendingmemes #kenyantrendingimages ')
-    
-def insert_domain(domain):
+    remove_config()
+
+
+def obtain_images(url1):
     with app.app_context():
         cursor=mydb.connection.cursor()
-        cursor.execute('INSERT INTO DOMAINS(URL)VALUES(%s)',(domain,))
-        mydb.connection.commit()
-
-
-
-
-
-
-def obtain_images(url):
-    with app.app_context():
-        cursor=mydb.connection.cursor()
-        cursor.execute('SELECT * FROM IMAGES WHERE URL="'+url+'"')
+        cursor.execute('SELECT * FROM IMAGES WHERE URL="'+url1+'"')
         fff=cursor.fetchall()
-        for ffx in fff:
-            pass
-        print(fff)
+        
         try:
-            if url in ffx:
+            foru=[]
+            for ffx in fff:
+                foru.append(ffx)
+                
+            print(fff)
+            if url1 in foru:
                 print('the url already exists')
             else:
-                url=str(url)
-
+                url=str(url1)
                 r = requests.get(url, allow_redirects=True)
                 global file
-                file=random.randint(1,100000000000)
+                file=random.randint(1,100000)
                 file='images/'+str(file)+'.png'
                 open(file, 'wb').write(r.content)
                 cursor=mydb.connection.cursor()
                 cursor.execute('INSERT INTO IMAGES(URL)VALUES(%s)',(url,))
                 mydb.connection.commit()
                 print('Successfully uploaded to database')
-
                 post_to_gram(file)
         except:
-            try:
-                url=str(url)
+            
+            url1=str(url1)
+            
+            r = requests.get(url1, allow_redirects=True)
+            
+            file=random.randint(1,100000)
+            
+            file='images/'+str(file)+'.png'
+            print(file)
+            open(file, 'wb').write(r.content)
+           
+            cursor=mydb.connection.cursor()
+            cursor.execute('INSERT INTO IMAGES(URL)VALUES(%s)',(url1,))
+            mydb.connection.commit()
+            print('Successfully uploaded to database')
+            post_to_gram(file)
 
-                print('Successfully uploaded to database')
-                r = requests.get(url, allow_redirects=True)
-                file=random.randint(1,100000000000)
-                file='images/'+str(file)+'.png'
-                open(file, 'wb').write(r.content)
-                
-                cursor=mydb.connection.cursor()
-                cursor.execute('INSERT INTO IMAGES(URL)VALUES(%s)',(url,))
-                mydb.connection.commit()
 
-                post_to_gram(file)
-            except:
-                print('unknown error occurred with the bot')
-                try:
-                    la=random.randint(1,1000000)
-                    os.rename('config',la)
-                    print('trying again')
-                    obtain_images(url)
-                except:
-                    print('could not find the error')
+
 
 list_of_domains=[]
-with app.app_context():
-    cursor=mydb.connection.cursor()
-    cursor.execute('SELECT * FROM DOMAINS')
-domains=cursor.fetchall()
-for domain in domains:
-    for minidomain in domain:
-        list_of_domains.append(minidomain)
+def fetch_from_list(list):
+    with app.app_context():
+        cursor=mydb.connection.cursor()
+        cursor.execute('SELECT * FROM DOMAINS')
+    domains=cursor.fetchall()
+    for dormain in domains:
+        for minidomain in dormain:
+            if minidomain in list:
+                pass
+            else:
+                list.append(minidomain)
+
+def clear_database():
+    with app.app_context():
+        cursor=mydb.connection.cursor()
+        cursor.execute('DELETE FROM DOMAINS')
+        mydb.connection.commit()
+        print('database cleared')
+        list_of_domains.clear()
+    
 
 @app.route('/',methods=['POST','GET'])
 def home():
     if request.method =='POST':
+        fetch_from_list(list_of_domains)
         url=str(request.form['url'])
         try:
             clear=str(request.form['clear'])
             if clear=='yes':
                 print('clear command detected')
-                list_of_domains.clear()
+                clear_database()
         except:
-            print('clear command undetected')
+            pass
         
         try:
             activator=str(request.form['activator'])
+            
             if activator=='activator':
-                for url in list_of_domains:
+                
+                for domain in list_of_domains:
                     for number in range(1,20):
-                        url=url.format(number)
-                        obtain_images(url)
-                        print('image',number)
-                        print(url)
+                        try:
+                            print(domain)
+                            url1=domain.format(number)
+                            obtain_images(url1)
+                            print('image',number)
+                            print(url1,'xxxl')
+                        except:
+                            print('plan B')
+                            remove_config()
         except:
-            print('actvator not found')
+            print('activator not found')
 
         if len(url)>5:
-            insert_domain(url)
+            
+            insert_domain(url,list_of_domains)
         else:
             print('url shorter than 5 characters')
             pass
@@ -143,6 +183,7 @@ def home():
         print(list_of_domains)
         return redirect(url_for('home'))
     else:
+        fetch_from_list(list_of_domains)
         return render_template('text.html',list_of_dtp=list_of_domains)
 
 if __name__ == '__main__':
