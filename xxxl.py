@@ -23,18 +23,15 @@ app.config['MYSQL_HOST']='localhost'
 app.config['MYSQL_USER']='root'
 app.config['MYSQL_PASSWORD']='GALGALLO10'
 app.config['MYSQL_DB']='MEMES'
-try:
-    bot=Bot()
-    bot.login(username='jabbling2020',password='galojabbling04')
-except:
-    Alert=('The Bot is not functioning Right now... try again Later')
-    print(Alert)
+
 
 def last_resort(images):
     #ensure images is like '/images'
 
     for image in os.listdir(images):
-        bot.upload_photo(images+image,caption='testing')
+        path=images+image
+        resize(path)
+        bot.upload_photo(path,caption='#memes by:@ft_achuu')
 
 
 def insert_domain(domain,list):
@@ -72,9 +69,29 @@ def remove_config():
 
         os.rmdir('config/log')
         os.rmdir(mypath)
+        os.rmdir('__pycache__')
         print('success')
     except:
         print('directories not found')
+
+try:
+    remove_config()
+except:
+    pass
+try:
+    bot=Bot()
+    bot.login(username='jabbling2020',password='galojabbling04')
+except:
+    Alert=('The Bot is not functioning Right now... try again Later')
+    print(Alert)
+
+def resize(path):
+    from PIL import Image
+    image = Image.open(path)
+    image = image.resize((1080,1080),Image.ANTIALIAS)
+    import os
+    os.remove(path)
+    image.save(fp=path)
 
 def post_to_gram(file):
     bot = Bot()
@@ -93,9 +110,10 @@ def obtain_images(url1):
         try:
             foru=[]
             for ffx in fff:
-                foru.append(ffx)
+                for ffx in ffx:
+                    foru.append(ffx)
                 
-            print(fff)
+            print(foru)
             if url1 in foru:
                 print('the url already exists')
             else:
@@ -110,7 +128,7 @@ def obtain_images(url1):
                 print('Successfully uploaded to database')
                 
         except:
-            
+            print('route 2')
             url1=str(url1)
             
             r = requests.get(url1, allow_redirects=True)
@@ -192,8 +210,7 @@ def home():
         else:
             print('url shorter than 5 characters')
             pass
-
-
+        last_resort('images/')
         print(list_of_domains)
         return redirect(url_for('home'))
     else:
