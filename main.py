@@ -2,6 +2,7 @@ from flask import Flask
 import mysql
 from os import listdir
 import os
+import time
 from os.path import isfile, join
 from bs4 import BeautifulSoup
 from instabot import Bot
@@ -28,6 +29,10 @@ app.config['MYSQL_DB']='MEMES'
 
 
 
+
+
+
+
 def insert_domain(domain,list):
     if domain in list:
         print('domain in list')
@@ -44,31 +49,70 @@ def remove_config():
         onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
         for files in onlyfiles:
             os.remove(mypath+'/'+files)
+        print('files removed for config')
 
         try:
             pycache='__pycache__'
             onlyfiles = [f for f in listdir(pycache) if isfile(join(pycache, f))]
             for file in onlyfiles:
                 os.remove(pycache+'/'+file)
+            print('files removed for pycache')
         except:
-            pass
+            print('pycache files not found')
 
         logfile='config/log'
         onlyfiles = [f for f in listdir(logfile) if isfile(join(logfile, f))]
         for files in onlyfiles:
             os.remove(logfile+'/'+files)
+        print('log files removed')
 
         os.rmdir('config/log')
         os.rmdir(mypath)
+        os.rmdir('__pycache__')
+        print('success')
     except:
         print('directories not found')
 
-def post_to_gram(file):
+
+try:
+    remove_config()
+except:
+    pass
+try:
+    bot=Bot()
+    bot.login(username='kenyaslang',password='galojabbling04')
+except:
+    Alert=('The Bot is not functioning Right now... try again Later')
+    print(Alert)
+
+
+def last_resort(images):
+    #ensure images is like '/images'
+
+    for image in os.listdir(images):
+        path=images+image
+        bot.upload_photo(path,caption='We Bring you the Finest Content Daily😂🔥😋  #memes')
+        time.sleep(5)
+        try:
+            os.remove(path)
+        except:
+            os.remove(str(path)+'.REMOVE_ME')
+
+def resize(path):
+    from PIL import Image
+    image = Image.open(path)
+    image = image.resize((547,609),Image.ANTIALIAS)
+    import os
+    os.remove(path)
+    image.save(fp=path)
+
+'''def post_to_gram(file):
     bot = Bot()
     bot.login(username = "its.galo_2",
           password = "KCD831J")
     bot.upload_photo(file,caption='#kenyantrendingmemes #kenyantrendingimages ')
-    remove_config()
+
+    remove_config()'''
 
 
 def obtain_images(url1):
@@ -80,9 +124,10 @@ def obtain_images(url1):
         try:
             foru=[]
             for ffx in fff:
-                foru.append(ffx)
+                for ffx in ffx:
+                    foru.append(ffx)
                 
-            print(fff)
+            print(foru)
             if url1 in foru:
                 print('the url already exists')
             else:
@@ -97,7 +142,7 @@ def obtain_images(url1):
                 print('Successfully uploaded to database')
                 
         except:
-            
+            print('route 2')
             url1=str(url1)
             
             r = requests.get(url1, allow_redirects=True)
@@ -155,7 +200,6 @@ def home():
             activator=str(request.form['activator'])
             
             if activator=='activator':
-                
                 for domain in list_of_domains:
                     for number in range(1,20):
                         try:
@@ -168,17 +212,18 @@ def home():
                         except:
                             print('plan B')
                             remove_config()
+                
         except:
             print('activator not found')
+
 
         if len(url)>5:
             
             insert_domain(url,list_of_domains)
         else:
-            print('url shorter than 5 characters')
             pass
-
-
+           
+        last_resort('images/')
         print(list_of_domains)
         return redirect(url_for('home'))
     else:

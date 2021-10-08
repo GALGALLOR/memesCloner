@@ -2,6 +2,7 @@ from flask import Flask
 import mysql
 from os import listdir
 import os
+import time
 from os.path import isfile, join
 from bs4 import BeautifulSoup
 from instabot import Bot
@@ -25,13 +26,11 @@ app.config['MYSQL_PASSWORD']='GALGALLO10'
 app.config['MYSQL_DB']='MEMES'
 
 
-def last_resort(images):
-    #ensure images is like '/images'
 
-    for image in os.listdir(images):
-        path=images+image
-        resize(path)
-        bot.upload_photo(path,caption='#memes by:@ft_achuu')
+
+
+
+
 
 
 def insert_domain(domain,list):
@@ -74,31 +73,49 @@ def remove_config():
     except:
         print('directories not found')
 
+
 try:
     remove_config()
 except:
     pass
 try:
     bot=Bot()
-    bot.login(username='jabbling2020',password='galojabbling04')
+    bot.login(username='kenyaslang',password='galojabbling04')
 except:
     Alert=('The Bot is not functioning Right now... try again Later')
     print(Alert)
 
+
+def last_resort(images):
+    #ensure images is like '/images'
+    import random
+    captions=('😂😂😂🤣🤣','Kwishaaa💀💀','#kenyasihami','#trendymemes','Trendingmemes')
+    caption=random.choice(captions)
+    caption=str(caption)+"    We bring you Kenya's finest content... Dont forget to like,share and follow"
+    for image in os.listdir(images):
+        path=images+image
+        bot.upload_photo(path,caption='We Bring you the Finest Content Daily😂🔥😋  #memes')
+        time.sleep(5)
+        try:
+            os.remove(path)
+        except:
+            os.remove(str(path)+'.REMOVE_ME')
+
 def resize(path):
     from PIL import Image
     image = Image.open(path)
-    image = image.resize((1080,1080),Image.ANTIALIAS)
+    image = image.resize((547,609),Image.ANTIALIAS)
     import os
     os.remove(path)
     image.save(fp=path)
 
-def post_to_gram(file):
+'''def post_to_gram(file):
     bot = Bot()
     bot.login(username = "its.galo_2",
           password = "KCD831J")
     bot.upload_photo(file,caption='#kenyantrendingmemes #kenyantrendingimages ')
-    remove_config()
+
+    remove_config()'''
 
 
 def obtain_images(url1):
@@ -186,7 +203,6 @@ def home():
             activator=str(request.form['activator'])
             
             if activator=='activator':
-                
                 for domain in list_of_domains:
                     for number in range(1,20):
                         try:
@@ -208,8 +224,8 @@ def home():
             
             insert_domain(url,list_of_domains)
         else:
-            print('url shorter than 5 characters')
             pass
+           
         last_resort('images/')
         print(list_of_domains)
         return redirect(url_for('home'))
