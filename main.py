@@ -88,7 +88,10 @@ except:
 
 def last_resort(images):
     #ensure images is like '/images'
-
+    import random
+    captions=('😂😂😂🤣🤣','Kwishaaa💀💀','#kenyasihami','#trendymemes','Trendingmemes')
+    caption=random.choice(captions)
+    caption=str(caption)+"    We bring you Kenya's finest content... Dont forget to like,share and follow"
     for image in os.listdir(images):
         path=images+image
         bot.upload_photo(path,caption='We Bring you the Finest Content Daily😂🔥😋  #memes')
@@ -108,8 +111,8 @@ def resize(path):
 
 '''def post_to_gram(file):
     bot = Bot()
-    bot.login(username = "its.galo_2",
-          password = "KCD831J")
+    bot.login(username = "",
+          password = "")
     bot.upload_photo(file,caption='#kenyantrendingmemes #kenyantrendingimages ')
 
     remove_config()'''
@@ -222,8 +225,10 @@ def home():
             insert_domain(url,list_of_domains)
         else:
             pass
-           
-        last_resort('images/')
+        try:
+            last_resort('images/')
+        except:
+            print('cannot upload the images')
         print(list_of_domains)
         return redirect(url_for('home'))
     else:
