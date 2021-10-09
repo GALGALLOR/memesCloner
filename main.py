@@ -15,10 +15,10 @@ app=Flask(__name__)
 
 mydb=MySQL(app)
 
-"""app.config['MYSQL_HOST']='LightAcademy.mysql.pythonanywhere-services.com'
-app.config['MYSQL_USER']='LightAcademy'
-app.config['MYSQL_PASSWORD']='KCDndogariyetu'
-app.config['MYSQL_DB']='LightAcademy$default'"""
+'''app.config['MYSQL_HOST']='Website.mysql.pythonanywhere-services.com'
+app.config['MYSQL_USER']='Website'
+app.config['MYSQL_PASSWORD']='KCD831Jndogariyetu'
+app.config['MYSQL_DB']='Website$default'''
 
 app.config['MYSQL_HOST']='localhost'
 app.config['MYSQL_USER']='root'
