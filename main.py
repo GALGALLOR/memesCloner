@@ -72,30 +72,34 @@ def remove_config():
         print('success')
     except:
         print('directories not found')
+bot=Bot()
+def login(username,password):
+    try:
+        remove_config()
+    except:
+        pass
+    try:
+        
+        bot.login(username=username,password=password)
+    except:
+        Alert=('The Bot is not functioning Right now... try again Later')
+        print(Alert)
 
 
-try:
-    remove_config()
-except:
-    pass
-try:
-    bot=Bot()
-    bot.login(username='kenyaslang',password='galojabbling04')
-except:
-    Alert=('The Bot is not functioning Right now... try again Later')
-    print(Alert)
-
-
-def last_resort(images):
-    #ensure images is like '/images'
+def last_resort():
+    #ensure images is like 'images/'
+    images='images'
     import random
     captions=('😂😂😂🤣🤣','Kwishaaa💀💀','#kenyasihami','#trendymemes','Trendingmemes')
     caption=random.choice(captions)
     caption=str(caption)+"    We bring you Kenya's finest content... Dont forget to like,share and follow"
     for image in os.listdir(images):
-        path=images+image
-        bot.upload_photo(path,caption='We Bring you the Finest Content Daily😂🔥😋  #memes')
-        time.sleep(5)
+        path=images+'/'+image
+        try:
+            bot.upload_photo(path,caption='We Bring you the Finest Content Daily😂🔥😋  #memes')
+            time.sleep(5)
+        except:
+            pass
         try:
             os.remove(path)
         except:
@@ -184,56 +188,161 @@ def clear_database():
         mydb.connection.commit()
         print('database cleared')
         list_of_domains.clear()
-    
 
+def post(url):
+    for number in range(1,20):
+        x=url.format(number)
+        print(1)
+        obtain_images(x)
+        print(2)
+        last_resort()
+        print(3)
+        time.sleep(5)
+
+url='https://nairobiwire.com/wp-content/uploads/2021/12/trend{}-12.jpg'
 @app.route('/',methods=['POST','GET'])
 def home():
-    if request.method =='POST':
-        fetch_from_list(list_of_domains)
-        url=str(request.form['url'])
-        try:
-            clear=str(request.form['clear'])
-            if clear=='yes':
-                print('clear command detected')
-                clear_database()
-        except:
-            pass
+    if request.method=='POST':
         
+
+        with app.app_context():
+            cursor=mydb.connection.cursor()
+            cursor.execute('SELECT * FROM DOMAINS')
+            fff=cursor.fetchall()
+        domains=[]
+        for x in fff:
+            for fln in x:
+               domains.append(fln)
+        
+    
+        #if activator is checked
         try:
-            activator=str(request.form['activator'])
-            
-            if activator=='activator':
-                for domain in list_of_domains:
-                    for number in range(1,20):
-                        try:
-                            print(domain)
-                            url1=domain.format(number)
-                            print(url1)
-                            obtain_images(url1)
-                            print('image',number)
-                            print(url1,'xxxl')
-                        except:
-                            print('plan B')
-                            remove_config()
+            if 'activator' in request.form['activator']:
+                username=request.form.getlist('usernamex')
+                list_of_passwords=[]
                 
+                for username in username:
+                    print(username)
+                    with app.app_context():
+                        cursor=mydb.connection.cursor()
+                        cursor.execute('SELECT PASSWORD FROM INSTANAMES WHERE USERNAME="'+username+'"')
+                        fff=cursor.fetchall()
+                    for xxl in fff:
+                        for password in xxl:
+                            list_of_passwords.append(password)
+                            print(password)
+                            #login and post
+                            login(username,password)
+                            for domain in domains:
+                                post(domain)
+
+                #login(username,password)
+                ### Post the Domains
+                #for domain in domains:
+                    #pass
+                    #post(domain)
         except:
-            print('activator not found')
-
-
-        if len(url)>5:
-            
-            insert_domain(url,list_of_domains)
-        else:
             pass
+                #take the url
         try:
-            last_resort('images/')
-        except:
-            print('cannot upload the images')
-        print(list_of_domains)
-        return redirect(url_for('home'))
-    else:
-        fetch_from_list(list_of_domains)
-        return render_template('text.html',list_of_dtp=list_of_domains)
+            url=str(request.form['url'])
+            if url in domains:
+                print('the domain already exists')
+                pass
+            elif url=='':
+                pass
+            elif url==' ':
+                pass
+            else:
+                cursor=mydb.connection.cursor()
+                cursor.execute('INSERT INTO DOMAINS(URL)VALUES(%s)',(url,))
+                mydb.connection.commit()
+                domains.append(url)
+                print('added')
 
-if __name__ == '__main__':
+
+        except:
+            print('error')
+
+        #get usernames
+        usernames=[]
+        passwords=[]
+        username=str(request.form['username'])
+        password=str(request.form['password'])
+        with app.app_context():
+            cursor=mydb.connection.cursor()
+            cursor.execute('SELECT USERNAME FROM INSTANAMES')
+            fff=cursor.fetchall()
+        for fln in fff:
+            for x in fln:
+                usernames.append(x)
+
+        with app.app_context():
+            cursor=mydb.connection.cursor()
+            cursor.execute('SELECT PASSWORD FROM INSTANAMES')
+            fff=cursor.fetchall()
+        for fln in fff:
+            for x in fln:
+                passwords.append(x)
+
+        if username in usernames:
+            pass
+        elif username=='':
+            pass
+        else:
+            cursor=mydb.connection.cursor()
+            cursor.execute('INSERT INTO INSTANAMES(USERNAME,PASSWORD)VALUES(%s,%s)',(username,password))
+            mydb.connection.commit()
+            usernames.append(username)
+            passwords.append(password)
+        
+        #Clear Usernames
+        try:
+            if 'clear_usernames' in request.form['clear_usernames']:
+                usernames.clear()
+                cursor=mydb.connection.cursor()
+                cursor.execute('DELETE FROM INSTANAMES')
+                mydb.connection.commit()
+        except:
+            pass
+        #clear domains
+        try:
+            if 'clear_domains' in request.form['clear_domains']:
+                domains.clear()
+                with app.app_context():
+                    cursor=mydb.connection.cursor()
+                    cursor.execute('DELETE FROM DOMAINS')
+                    mydb.connection.commit()
+        except:
+            pass
+            
+        
+
+        return render_template('text.html',domains=domains,usernames=usernames)
+    else:
+        #load domains
+        with app.app_context():
+            cursor=mydb.connection.cursor()
+            cursor.execute('SELECT * FROM DOMAINS')
+            fff=cursor.fetchall()
+        domains=[]
+        try:
+            for x in fff:
+                for fln in x:
+                   domains.append(fln)
+            
+        except:
+            pass
+        #load usernames
+        with app.app_context():
+            cursor=mydb.connection.cursor()
+            cursor.execute('SELECT USERNAME FROM INSTANAMES')
+            fff=cursor.fetchall()
+        usernames=[]
+        for x in fff:
+            for fln in x:
+               usernames.append(fln)
+        return render_template('text.html',domains=domains,usernames=usernames)
+
+if __name__=='__main__':
     app.run(debug=True)
