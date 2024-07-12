@@ -2,7 +2,7 @@
 from instabot import Bot
 
 bot=Bot()
-bot.login(username='kenyaslang',password='galojabbling04')
+bot.login(username='',password='')
 
 followers=bot.get_user_followers('nairobi_gosip_club')
 for follower in followers:
